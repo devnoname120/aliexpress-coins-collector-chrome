@@ -65,3 +65,65 @@ Includes a modern interface, dark mode, detailed analytics, and smart features.
    ```bash
    git clone https://github.com/MordechaiN/aliexpress-coins-collector-chrome.git
    cd aliexpress-coins-collector-chrome
+2. Open Chrome and go to:  
+   `chrome://extensions/`
+
+3. Enable **Developer mode** (top right corner)
+
+4. Click **"Load unpacked"** and select the folder you cloned
+
+---
+
+## 📱 How to Use
+
+1. **Automatic Run:** The extension will activate every day at 10:30 AM  
+2. **Manage Links:** Click the extension icon → *Manage Links*  
+3. **Analytics Dashboard:** Access via *📊 Advanced Analytics*  
+4. **Dark Mode Toggle:** Click the 🌙 icon (top-left corner)
+
+---
+
+## 🛠️ Built With
+
+- **Manifest V3** – Latest Chrome Extension architecture
+- **JavaScript (ES6+)** – With `async/await` support
+- **Chrome Storage Sync** – For persistent cross-device data
+- **Chrome Notifications API** – Smart feedback and alerts
+- **HTML5 & CSS3** – Clean, responsive interface
+
+---
+
+## 🔏 License
+
+© 2025 Mordechai Naaman. All rights reserved.  
+This project is licensed under a **Custom Private License**.
+
+### Summary:
+- ✅ Free for **personal, non-commercial use**
+- ✅ You may view, study, and adapt the code privately
+- ❌ **Commercial use** is prohibited without prior written permission
+- ❌ **Redistribution**, **resale**, or **removal of credit** is forbidden
+- 🔒 **Attribution is mandatory** in all uses or derivative projects
+
+### Required Attribution:
+> Based on *AliExpress Coins Collector* by Mordechai Naaman  
+> GitHub: [https://github.com/MordechaiN/aliexpress-coins-collector-chrome](https://github.com/MordechaiN/aliexpress-coins-collector-chrome)
+
+For full license terms, see the [LICENSE](LICENSE) file.
+
+---
+
+## 📞 Contact
+
+**Mordechai Naaman**  
+- GitHub: [@MordechaiN](https://github.com/MordechaiN)  
+- Email: [mordechaineeman@outlook.com](mailto:mordechaineeman@outlook.com)
+
+> 📧 *For commercial licensing or extended permissions – contact directly.*
+
+---
+
+<div align="center">
+  <strong>🔒 Private Project – Personal Use Only</strong><br/>
+  <em>Commercial use or redistribution requires prior authorization</em>
+</div>

@@ -134,3 +134,22 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Chrome Extension specific
+*.crx                 # Packed extension files
+*.pem                 # Extension key (sensitive!)
+*.zip                 # Manual zip archives for uploads
+
+# Extension build output (if any bundling/building is used)
+dist/
+build/
+
+# Personal data (like link exports/imports if applicable)
+exported-links.json
+imported-links.json
+backup-*.json
+
+# Extension logs (if created)
+logs/
+*.log
+

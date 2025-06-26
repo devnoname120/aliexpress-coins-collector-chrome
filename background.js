@@ -17,7 +17,7 @@ const SHOPS = [
   "e5ba5b7349344a0987687e67ca3e54fe"
 ];
 
-const LINKS = SHOPS.map(id => `https://sale.aliexpress.com/__mobile/wTTBw4hZBz_m.htm?outBizId=${id}&identity=SHOP`);
+let LINKS = SHOPS.map(id => `https://sale.aliexpress.com/__mobile/wTTBw4hZBz_m.htm?outBizId=${id}&identity=SHOP`);
 
 let isLoggingEnabled = true;
 let currentProcessing = false;

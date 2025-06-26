@@ -229,83 +229,83 @@
   <div class="header">
     <button class="theme-toggle" id="themeToggle">🌙</button>
     <h3 style="margin: 5px 0;">AliExpress Coins Collector</h3>
-    <p style="font-size: 10px; margin: 0; color: var(--text-secondary);">גרסה 1.3</p>
+    <p style="font-size: 10px; margin: 0; color: var(--text-secondary);">Version 1.3</p>
   </div>
   
   <div class="status-card">
-    <div><strong>סטטוס:</strong> <span id="status">טוען...</span></div>
-    <div><strong>הרצה הבאה:</strong> <span id="nextRun">טוען...</span></div>
-    <div><strong>לוג:</strong> <span id="loggingStatus">טוען...</span></div>
+    <div><strong>Status:</strong> <span id="status">Loading...</span></div>
+    <div><strong>Next Run:</strong> <span id="nextRun">Loading...</span></div>
+    <div><strong>Log:</strong> <span id="loggingStatus">Loading...</span></div>
   </div>
 
-  <!-- סטטיסטיקות מיני -->
+  <!-- Mini Statistics -->
   <div class="stats-mini">
     <div class="stat-mini">
       <div class="stat-number" id="todaySuccess">0</div>
-      <div>הצלחות היום</div>
+      <div>Today's Successes</div>
     </div>
     <div class="stat-mini">
       <div class="stat-number" id="totalCoins">0</div>
-      <div>סה"כ מטבעות</div>
+      <div>Total Coins</div>
     </div>
   </div>
   
-  <!-- כפתורים ראשיים -->
-  <button id="testRun" class="button">🚀 הפעל בדיקה עכשיו</button>
+  <!-- Main Buttons -->
+  <button id="testRun" class="button">🚀 Run Test Now</button>
   <button id="toggleLogging" class="button small">
-    <span id="loggingButtonText">כבה לוג</span>
+    <span id="loggingButtonText">Disable Log</span>
   </button>
   
-  <!-- כפתורי ניהול -->
+  <!-- Management Buttons -->
   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin: 10px 0;">
-    <button id="manageLinks" class="button secondary small">📝 לינקים</button>
-    <button id="showAnalytics" class="button secondary small">📊 נתונים</button>
+    <button id="manageLinks" class="button secondary small">📝 Links</button>
+    <button id="showAnalytics" class="button secondary small">📊 Analytics</button>
   </div>
 
   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-    <button id="showLogs" class="button secondary small">📋 לוגים</button>
-    <button id="showCredits" class="button secondary small">ℹ️ אודות</button>
+    <button id="showLogs" class="button secondary small">📋 Logs</button>
+    <button id="showCredits" class="button secondary small">ℹ️ About</button>
   </div>
 
-  <!-- אזורים מתקפלים -->
+  <!-- Collapsible Sections -->
   <div id="linksContainer" class="expandable">
     <div class="section-content">
-      <h4>ניהול לינקים</h4>
+      <h4>Link Management</h4>
       <div style="margin-bottom: 10px;">
-        סה"כ לינקים: <span id="linksCount">0</span>
+        Total Links: <span id="linksCount">0</span>
       </div>
       
-      <input type="text" id="newLinkInput" placeholder="הדבק לינק חדש...">
-      <button id="addLink" class="button small">הוסף לינק</button>
+      <input type="text" id="newLinkInput" placeholder="Paste new link...">
+      <button id="addLink" class="button small">Add Link</button>
       
       <div id="linksList" style="max-height: 100px; overflow-y: auto; margin: 10px 0;">
-        <!-- לינקים יוצגו כאן -->
+        <!-- Links will be shown here -->
       </div>
       
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-        <button id="exportLinks" class="button secondary small">ייצא</button>
-        <button id="importLinks" class="button secondary small">ייבא</button>
+        <button id="exportLinks" class="button secondary small">Export</button>
+        <button id="importLinks" class="button secondary small">Import</button>
       </div>
     </div>
   </div>
 
   <div id="analyticsContainer" class="expandable">
     <div class="section-content">
-      <h4>📊 אנליטיקה</h4>
+      <h4>📊 Analytics</h4>
       
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
         <div class="stat-mini">
           <div class="stat-number" id="weeklyAverage">0%</div>
-          <div>ממוצע שבועי</div>
+          <div>Weekly Average</div>
         </div>
         <div class="stat-mini">
           <div class="stat-number" id="streak">0</div>
-          <div>ימי רצף</div>
+          <div>Streak Days</div>
         </div>
       </div>
 
       <div style="background: var(--bg-primary); padding: 8px; border-radius: 4px; margin-bottom: 10px; border: 1px solid var(--border-color);">
-        <div style="font-size: 11px; margin-bottom: 5px;">אחוז הצלחה יומי</div>
+        <div style="font-size: 11px; margin-bottom: 5px;">Daily Success Rate</div>
         <div class="progress-bar">
           <div class="progress-fill" id="successProgress" style="width: 0%;">
             <span id="successPercentage">0%</span>
@@ -313,15 +313,15 @@
         </div>
       </div>
 
-      <button id="resetStats" class="button small danger">איפוס נתונים</button>
+      <button id="resetStats" class="button small danger">Reset Data</button>
     </div>
   </div>
 
   <div id="logsContainer" class="expandable">
     <div class="section-content">
-      <h4>📋 לוגים</h4>
+      <h4>📋 Logs</h4>
       <div id="logsList" style="max-height: 150px; overflow-y: auto;">
-        <!-- לוגים יוצגו כאן -->
+        <!-- Logs will be shown here -->
       </div>
     </div>
   </div>

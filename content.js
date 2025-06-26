@@ -5,5 +5,5 @@
  * @see https://github.com/MordechaiN/aliexpress-coins-collector-chrome
  */
 
-// קובץ זה יכול להישאר ריק או לשמש לפונקציות עזר נוספות
-// הפעולות העיקריות מתבצעות דרך executeScript ב-background.js
+// This file can remain empty or be used for additional helper functions
+// Main actions are performed via executeScript in background.js

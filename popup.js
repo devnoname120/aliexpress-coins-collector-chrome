@@ -6,7 +6,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-  // אלמנטים
+  // Elements
   const statusElement = document.getElementById('status');
   const nextRunElement = document.getElementById('nextRun');
   const loggingStatusElement = document.getElementById('loggingStatus');
@@ -14,12 +14,12 @@ document.addEventListener('DOMContentLoaded', function() {
   const testRunBtn = document.getElementById('testRun');
   const toggleLoggingBtn = document.getElementById('toggleLogging');
   const loggingText = document.getElementById('loggingText');  
-  // טעינה ראשונית
+  // Initial load
   loadStatus();
   loadTheme();
   loadAnalytics();
   
-  // מאזינים
+  // Listeners
   themeToggle.addEventListener('click', toggleTheme);
   testRunBtn.addEventListener('click', runTest);
   toggleLoggingBtn.addEventListener('click', toggleLogging);
@@ -28,30 +28,30 @@ document.addEventListener('DOMContentLoaded', function() {
     chrome.tabs.create({ url: chrome.runtime.getURL('credits.html') });
   });
 
-  // כפתורי הצגה/הסתרה
+  // Show/hide section buttons
   document.getElementById('manageLinks').addEventListener('click', () => toggleSection('linksContainer'));
   document.getElementById('showAnalytics').addEventListener('click', () => toggleSection('analyticsContainer'));
   document.getElementById('showLogs').addEventListener('click', () => toggleSection('logsContainer'));
 
-  // מאזינים לניהול לינקים
+  // Link management listeners
   document.getElementById('addLink').addEventListener('click', addNewLink);
   document.getElementById('exportLinks').addEventListener('click', exportLinks);
   document.getElementById('importLinks').addEventListener('click', importLinks);
   document.getElementById('resetStats').addEventListener('click', resetAnalytics);
 
-  // מאזין ל-Enter בשדה הלינק החדש
+  // Listener for Enter in new link field
   document.getElementById('newLinkInput').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
       addNewLink();
     }
   });
 
-  // פונקציות
+  // Functions
   function toggleSection(sectionId) {
     const section = document.getElementById(sectionId);
     const isVisible = section.classList.contains('show');
     
-    // סגור את כל הסקשנים
+    // Close all sections
     document.querySelectorAll('.expandable').forEach(el => el.classList.remove('show'));
     
     if (!isVisible) {
@@ -81,10 +81,10 @@ document.addEventListener('DOMContentLoaded', function() {
   function loadStatus() {
     chrome.runtime.sendMessage({ action: 'getStatus' }, (response) => {
       if (response) {
-        statusElement.textContent = response.currentProcessing ? 'רץ עכשיו' : 'ממתין';
-        nextRunElement.textContent = new Date(response.nextRun).toLocaleString('he-IL');
-        loggingStatusElement.textContent = response.isLoggingEnabled ? 'פעיל' : 'כבוי';
-        loggingButtonText.textContent = response.isLoggingEnabled ? 'כבה לוג' : 'הפעל לוג';
+        statusElement.textContent = response.currentProcessing ? 'Running now' : 'Waiting';
+        nextRunElement.textContent = new Date(response.nextRun).toLocaleString('en-US');
+        loggingStatusElement.textContent = response.isLoggingEnabled ? 'Enabled' : 'Disabled';
+        loggingButtonText.textContent = response.isLoggingEnabled ? 'Disable Log' : 'Enable Log';
         testRunBtn.disabled = response.currentProcessing;
       }
     });
@@ -113,18 +113,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function runTest() {
     testRunBtn.disabled = true;
-    testRunBtn.textContent = 'רץ...';
+    testRunBtn.textContent = 'Running...';
     
     chrome.runtime.sendMessage({ action: 'testRun' }, (response) => {
       if (response && response.success) {
-        alert('בדיקה התחילה! בדוק את הלוגים לעדכונים.');
+        alert('Test started! Check the logs for updates.');
       } else {
-        alert('לא ניתן להפעיל בדיקה: ' + (response?.message || 'שגיאה לא ידועה'));
+        alert('Unable to start test: ' + (response?.message || 'Unknown error'));
       }
       
       setTimeout(() => {
         testRunBtn.disabled = false;
-        testRunBtn.textContent = '🚀 הפעל בדיקה עכשיו';
+        testRunBtn.textContent = '🚀 Run Test Now';
         loadStatus();
         loadAnalytics();
       }, 2000);
@@ -134,8 +134,8 @@ document.addEventListener('DOMContentLoaded', function() {
   function toggleLogging() {
     chrome.runtime.sendMessage({ action: 'toggleLogging' }, (response) => {
       if (response) {
-        loggingStatusElement.textContent = response.isLoggingEnabled ? 'פעיל' : 'כבוי';
-        loggingButtonText.textContent = response.isLoggingEnabled ? 'כבה לוג' : 'הפעל לוג';
+        loggingStatusElement.textContent = response.isLoggingEnabled ? 'Enabled' : 'Disabled';
+        loggingButtonText.textContent = response.isLoggingEnabled ? 'Disable Log' : 'Enable Log';
       }
     });
   }
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       const deleteBtn = document.createElement('button');
       deleteBtn.className = 'delete-btn';
-      deleteBtn.textContent = 'מחק';
+      deleteBtn.textContent = 'Delete';
       deleteBtn.onclick = () => deleteLink(index);
       
       linkItem.appendChild(linkUrl);
@@ -180,12 +180,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const newLink = newLinkInput.value.trim();
     
     if (!newLink) {
-      alert('אנא הזן לינק');
+      alert('Please enter a link');
       return;
     }
     
     if (!newLink.includes('aliexpress.com')) {
-      alert('אנא הזן לינק תקין של AliExpress');
+      alert('Please enter a valid AliExpress link');
       return;
     }
     
@@ -196,24 +196,24 @@ document.addEventListener('DOMContentLoaded', function() {
       if (response && response.success) {
         newLinkInput.value = '';
         loadLinks();
-        alert('לינק נוסף בהצלחה!');
+        alert('Link added successfully!');
       } else {
-        alert('שגיאה בהוספת הלינק: ' + (response?.message || 'שגיאה לא ידועה'));
+        alert('Error adding link: ' + (response?.message || 'Unknown error'));
       }
     });
   }
 
   function deleteLink(index) {
-    if (confirm('האם אתה בטוח שברצונך למחוק את הלינק?')) {
+    if (confirm('Are you sure you want to delete this link?')) {
       chrome.runtime.sendMessage({ 
         action: 'deleteLink', 
         index: index 
       }, (response) => {
         if (response && response.success) {
           loadLinks();
-          alert('לינק נמחק בהצלחה!');
+          alert('Link deleted successfully!');
         } else {
-          alert('שגיאה במחיקת הלינק');
+          alert('Error deleting link');
         }
       });
     }
@@ -222,21 +222,21 @@ document.addEventListener('DOMContentLoaded', function() {
   function exportLinks() {
     chrome.runtime.sendMessage({ action: 'getLinks' }, (response) => {
       if (response && response.links) {
-        const timestamp = new Date().toLocaleString('he-IL');
-        let linksText = `AliExpress Coins Collector - ייצוא לינקים\n`;
-        linksText += `נוצר על ידי: מרדכי נאמן\n`;
-        linksText += `תאריך: ${timestamp}\n`;
+        const timestamp = new Date().toLocaleString('en-US');
+        let linksText = `AliExpress Coins Collector - Link Export\n`;
+        linksText += `Created by: Mordechai Neeman\n`;
+        linksText += `Date: ${timestamp}\n`;
         linksText += `${'='.repeat(60)}\n\n`;
         
         response.links.forEach((link, index) => {
-          linksText += `┌─ לינק מספר ${index + 1} ─┐\n`;
+          linksText += `┌─ Link number ${index + 1} ─┐\n`;
           linksText += `│ ${link}\n`;
           linksText += `└${'─'.repeat(50)}┘\n\n`;
         });
         
         linksText += `${'='.repeat(60)}\n`;
-        linksText += `סה"כ לינקים: ${response.links.length}\n`;
-        linksText += `תודה על השימוש בתוסף! 🙏`;
+        linksText += `Total links: ${response.links.length}\n`;
+        linksText += `Thank you for using the extension! 🙏`;
         
         const blob = new Blob([linksText], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
         a.click();
         
         URL.revokeObjectURL(url);
-        alert('לינקים יוצאו בהצלחה!');
+        alert('Links exported successfully!');
       }
     });
   }
@@ -274,13 +274,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }, (response) => {
               if (response && response.success) {
                 loadLinks();
-                alert(`${links.length} לינקים יובאו בהצלחה!`);
+                alert(`${links.length} links imported successfully!`);
               } else {
-                alert('שגיאה בייבוא הלינקים');
+                alert('Error importing links');
               }
             });
           } else {
-            alert('לא נמצאו לינקים תקינים של AliExpress בקובץ');
+            alert('No valid AliExpress links found in the file');
           }
         };
         reader.readAsText(file);
@@ -305,24 +305,24 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   
-    // רענון אוטומטי כל 5 שניות כשהחלון פתוח
+    // Auto-refresh every 5 seconds when the window is open
     if (document.getElementById('logsContainer').classList.contains('show')) {
       setTimeout(loadLogs, 5000);
     }
   }
 
   function resetAnalytics() {
-    if (confirm('האם אתה בטוח שברצונך לאפס את כל הסטטיסטיקות?')) {
+    if (confirm('Are you sure you want to reset all statistics?')) {
       chrome.runtime.sendMessage({ action: 'resetAnalytics' }, (response) => {
         if (response && response.success) {
-          alert('סטטיסטיקות אופסו בהצלחה!');
+          alert('Statistics reset successfully!');
           loadAnalytics();
         }
       });
     }
   }
   
-  // רענון כל 10 שניות
+  // Auto-refresh every 10 seconds
   setInterval(() => {
     loadStatus();
     loadAnalytics();

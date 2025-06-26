@@ -1,7 +1,7 @@
 // credits.js
 /**
- * סגירת הטאב הנוכחי
- * מנסה לסגור את הטאב דרך ה-Chrome API, אם זה לא עובד - סוגר את החלון
+ * Close the current tab
+ * Tries to close the tab via the Chrome API, if it doesn't work - closes the window
  */
 function closeTab() {
   if (chrome && chrome.runtime) {

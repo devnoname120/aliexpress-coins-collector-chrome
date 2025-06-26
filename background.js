@@ -5,7 +5,7 @@
  * @see https://github.com/MordechaiN/aliexpress-coins-collector-chrome
  */
 
-// רשימת הלינקים - עכשיו תיטען מ-storage
+// Link list - now loaded from storage
 let LINKS = [
   "https://sale.aliexpress.com/__mobile/wTTBw4hZBz_m.htm?outBizId=5a96e8a378fe418fbd20331ff74a1b97&identity=SHOP&shopNowRedirect=https%253A%252F%252Fwww.aliexpress.com%252Fstore%252F1051119&spm=a2g0n.store_m_home.checkin_with_prize_2002708235515.0&statusBarHeight=93&_currency=USD&_lang=en_MA&fromApp=true&_launchTID=f50d9910-fd81-4c7a-a5e4-88da9ebb1219&aff_fcid=1010fe80a381497ea5be63e6f27ae502-1723128525135-02380-_DkopTOr&tt=CPS_NORMAL&aff_fsk=_DkopTOr&nr=n&_dognoseId=WlBpb1lNZEl5cWtEQUpDRnFRTHhkVlkBkTJ2rNJhbGlleHByZQAAA48y&aff_fcid=2c74dbb1986d4cf9a0506a067b901b78-1743156791321-08463-_DDxpLMf&tt=CPS_NORMAL&aff_fsk=_DDxpLMf&aff_platform=portals-tool&sk=_DDxpLMf&aff_trace_key=2c74dbb1986d4cf9a0506a067b901b78-1743156791321-08463-_DDxpLMf&terminal_id=bd170ef5df5a49228059a474d1c1c1ea",
   "https://sale.aliexpress.com/__mobile/wTTBw4hZBz_m.htm?outBizId=1fcb3e07f8f2471c95161497d80a91f7&identity=SHOP&shopNowRedirect=https%253A%252F%252Fwww.aliexpress.com%252Fstore%252F912370197&spm=a2g0n.store_m_home.checkin_with_prize_2008922585801.0&statusBarHeight=93&_currency=USD&_lang=en_MA&fromApp=true&_launchTID=0f86239d-ecea-4ef1-ab2c-c931809923b5&aff_fcid=5a7aebf80d1e4b47a86252f26eb55e31-1723139618559-08629-_DcJtNQP&tt=CPS_NORMAL&aff_fsk=_DcJtNQP&nr=n&_dognoseId=WlBpb1lNZEl5cWtEQUpDRnFRTHhkVlkBkTMf8rJhbGlleHByZQAAAXls&aff_fcid=36b877b12bff40ffa968b1c48a4d8d3c-1743156817542-08565-_DmmmKt5&tt=CPS_NORMAL&aff_fsk=_DmmmKt5&aff_platform=portals-tool&sk=_DmmmKt5&aff_trace_key=36b877b12bff40ffa968b1c48a4d8d3c-1743156817542-08565-_DmmmKt5&terminal_id=bd170ef5df5a49228059a474d1c1c1ea",
@@ -19,18 +19,18 @@ let LINKS = [
 let isLoggingEnabled = true;
 let currentProcessing = false;
 
-// משתנים חדשים למעקב סטטיסטיקות
+// New variables for statistics tracking
 let dailyStats = { successful: 0, failed: 0, total: 0, startTime: null };
 
-// משתנים חדשים לאנליטיקה מתקדמת
+// New variables for advanced analytics
 let analytics = {
-  dailyStats: [], // מכיל אובייקטים עם תאריך והצלחות ליום
-  totalCoins: 0, // סיכום כל ההצלחות מההתחלה
-  currentStreak: 0, // רצף ימים עם לפחות הצלחה אחת
+  dailyStats: [], // Contains objects with date and daily successes
+  totalCoins: 0, // Sum of all successes from the beginning
+  currentStreak: 0, // Streak of days with at least one success
   lastRunDate: null
 };
 
-// פונקציה לטעינת אנליטיקה מ-storage
+// Function to load analytics from storage
 async function loadAnalyticsFromStorage() {
   return new Promise((resolve) => {
     chrome.storage.sync.get(['analytics'], (result) => {
@@ -42,15 +42,14 @@ async function loadAnalyticsFromStorage() {
   });
 }
 
-// פונקציה לשמירת אנליטיקה ב-storage
+// Function to save analytics to storage
 function saveAnalyticsToStorage() {
   chrome.storage.sync.set({ analytics }, () => {
-    log('נתוני אנליטיקה נשמרו');
+    log('Analytics data saved');
   });
 }
 
-// פונקציה לעדכון סטטיסטיקות יומיות
-
+// Function to update daily statistics
 function updateDailyStats(successful, failed, duration) {
   const today = new Date().toISOString().split('T')[0];
   
@@ -67,13 +66,13 @@ function updateDailyStats(successful, failed, duration) {
   todayStats.successful += successful;
   todayStats.failed += failed;
   todayStats.total = todayStats.successful + todayStats.failed;
-  todayStats.coinsCollected = todayStats.successful; // 1 מטבע = 1 הצלחה
+  todayStats.coinsCollected = todayStats.successful; // 1 coin = 1 success
   todayStats.successRate = Math.round((todayStats.successful / todayStats.total) * 100) || 0;
 
-  analytics.totalCoins += successful; // מוסיף להצלחות הכלליות
+  analytics.totalCoins += successful; // Add to total successes
 }
 
-// פונקציה לעדכון רצף ימים
+// Function to update streak
 function updateStreak(today, wasSuccessful) {
   if (wasSuccessful) {
     const yesterday = new Date();
@@ -90,7 +89,7 @@ function updateStreak(today, wasSuccessful) {
   }
 }
 
-// פונקציה לקבלת נתוני אנליטיקה
+// Function to get analytics data
 function getAnalyticsData() {
   const today = new Date().toISOString().split('T')[0];
   const todayStats = analytics.dailyStats.find(day => day.date === today) || 
@@ -116,7 +115,7 @@ function getAnalyticsData() {
   };
 }
 
-// פונקציה להצגת התראות ידידותיות
+// Function to show friendly notifications
 function showNotification(title, message, type = 'basic') {
   const iconUrl = type === 'success' ? 'icon48.png' : 
                   type === 'error' ? 'icon48.png' : 'icon48.png';
@@ -130,15 +129,15 @@ function showNotification(title, message, type = 'basic') {
   });
 }
 
-// פונקציה לטעינת לינקים מ-storage
+// Function to load links from storage
 async function loadLinksFromStorage() {
   return new Promise((resolve) => {
     chrome.storage.sync.get(['customLinks'], (result) => {
       if (result.customLinks && result.customLinks.length > 0) {
         LINKS = result.customLinks;
-        log(`נטענו ${LINKS.length} לינקים מהאחסון`);
+        log(`Loaded ${LINKS.length} links from storage`);
       } else {
-        // שמירת הלינקים הדיפולטיים בפעם הראשונה
+        // Save default links the first time
         saveLinksToStorage(LINKS);
       }
       resolve();
@@ -146,33 +145,30 @@ async function loadLinksFromStorage() {
   });
 }
 
-// פונקציה לשמירת לינקים ב-storage
+// Function to save links to storage
 function saveLinksToStorage(links) {
   chrome.storage.sync.set({ customLinks: links }, () => {
-    log(`נשמרו ${links.length} לינקים באחסון`);
+    log(`Saved ${links.length} links to storage`);
   });
 }
 
-// פונקציה לרישום לוג
+// Function to log
 function log(message) {
   if (isLoggingEnabled) {
-    const timestamp = new Date().toLocaleString('he-IL');
+    const timestamp = new Date().toLocaleString('en-US');
     console.log(`[${timestamp}] AliExpress Coins Collector: ${message}`);
-    
     chrome.storage.sync.get(['logs'], (result) => {
       const logs = result.logs || [];
       logs.push(`[${timestamp}] ${message}`);
-      
       if (logs.length > 100) {
         logs.splice(0, logs.length - 100);
       }
-      
       chrome.storage.sync.set({ logs });
     });
   }
 }
 
-// פונקציה לחישוב הזמן הבא של 10:30
+// Function to calculate next 10:30 time
 function getNext1030() {
   const now = new Date();
   let target = new Date();
@@ -185,12 +181,12 @@ function getNext1030() {
   return target.getTime();
 }
 
-// יצירת alarm לשעה 10:30 יומית
+// Create daily alarm for 10:30
 chrome.runtime.onInstalled.addListener(async () => {
-  log('התוסף הותקן בהצלחה');
-  showNotification('🎉 AliExpress Coins Collector', 'התוסף הותקן בהצלחה! איסוף מטבעות יתחיל מחר בשעה 10:30', 'success');
+  log('Extension installed successfully');
+  showNotification('🎉 AliExpress Coins Collector', 'The extension was installed successfully! Coin collection will start tomorrow at 10:30', 'success');
   
-  // טעינת לינקים מאחסון
+  // Load links from storage
   await loadLinksFromStorage();
   await loadAnalyticsFromStorage();
   
@@ -199,44 +195,44 @@ chrome.runtime.onInstalled.addListener(async () => {
     periodInMinutes: 24 * 60
   });
   
-  log('נקבע תזמון יומי לשעה 10:30');
+  log('Daily alarm set for 10:30');
 });
 
-// מאזין ל-alarms
+// Listener for alarms
 chrome.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name === 'dailyAliExpressTask' && !currentProcessing) {
-    log('התחלת עיבוד יומי של לינקים');
+    log('Starting daily processing of links');
     currentProcessing = true;
     
-    // איפוס סטטיסטיקות יומיות
+    // Reset daily statistics
     dailyStats = { successful: 0, failed: 0, total: LINKS.length, startTime: new Date() };
     
-    // התראת התחלה
-    showNotification('🚀 התחלת איסוף מטבעות', `מתחיל לעבד ${LINKS.length} לינקים...`, 'basic');
+    // Start notification
+    showNotification('🚀 Starting coin collection', `Processing ${LINKS.length} links...`, 'basic');
     
     try {
-      await loadLinksFromStorage(); // טעינה מחדש של הלינקים
+      await loadLinksFromStorage(); // Reload links
       await processAllLinks();
     } catch (error) {
-      log(`שגיאה בעיבוד: ${error.message}`);
-      showNotification('❌ שגיאה באיסוף', `שגיאה: ${error.message}`, 'error');
+      log(`Error processing: ${error.message}`);
+      showNotification('❌ Error processing', `Error: ${error.message}`, 'error');
     } finally {
       currentProcessing = false;
       
-      // התראת סיום עם סטטיסטיקות
+      // End notification with statistics
       const duration = Math.round((new Date() - dailyStats.startTime) / 1000 / 60);
       const successRate = Math.round((dailyStats.successful / dailyStats.total) * 100);
       
       showNotification(
-        '✅ איסוף מטבעות הושלם!', 
-        `הצלחות: ${dailyStats.successful}/${dailyStats.total} (${successRate}%) | זמן: ${duration} דקות`, 
+        '✅ Coin collection completed!', 
+        `Successes: ${dailyStats.successful}/${dailyStats.total} (${successRate}%) | Time: ${duration} minutes`, 
         'success'
       );
       
-      // עדכון אנליטיקה
+      // Update analytics
       updateDailyStats(dailyStats.successful, dailyStats.failed, duration);
       
-      log(`סיום עיבוד יומי - הצלחות: ${dailyStats.successful}, כישלונות: ${dailyStats.failed}`);
+      log(`End of daily processing - Successes: ${dailyStats.successful}, Failures: ${dailyStats.failed}`);
     }
   }
 });
@@ -244,9 +240,9 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
 async function processAllLinks() {
   for (let i = 0; i < LINKS.length; i++) {
     const link = LINKS[i];
-    log(`פותח לינק ${i + 1}/${LINKS.length}: ${link.substring(0, 50)}...`);
+    log(`Opening link ${i + 1}/${LINKS.length}: ${link.substring(0, 50)}...`);
     try {
-      // הפיכת chrome.tabs.create ל-Promise
+      // Convert chrome.tabs.create to Promise
       const tab = await new Promise((resolve, reject) => {
         chrome.tabs.create({ url: link, active: false }, (tab) => {
           if (chrome.runtime.lastError || !tab) reject(new Error(chrome.runtime.lastError?.message || 'Error opening tab'));
@@ -254,10 +250,10 @@ async function processAllLinks() {
         });
       });
       
-      // המתנה לטעינת הדף
+      // Wait for page load
       await waitForTabLoad(tab.id);
       
-      // הפיכת chrome.scripting.executeScript ל-Promise
+      // Convert chrome.scripting.executeScript to Promise
       const result = await new Promise((resolve, reject) => {
         chrome.scripting.executeScript(
           { target: { tabId: tab.id }, func: performPageActions },
@@ -268,34 +264,34 @@ async function processAllLinks() {
         );
       });
       
-      // בדיקת תוצאה
+      // Check result
       if (result && result[0] && result[0].result) {
-        // הצלחה
+        // Success
         dailyStats.successful++;
-        log(`לינק ${i + 1} הושלם בהצלחה ✅`);
+        log(`Link ${i + 1} completed successfully ✅`);
       } else {
-        // לא נמצא כפתור או שגיאה
+        // No button found or error
         dailyStats.failed++;
-        log(`לינק ${i + 1} - לא נמצא כפתור ❌`);
+        log(`Link ${i + 1} - No button found ❌`);
       }
       
-      // סגירת הטאב
+      // Close tab
       await new Promise((resolve) => {
         chrome.tabs.remove(tab.id, () => resolve());
       });
       
-      await sleep(2000); // מנוחה בין לינקים
+      await sleep(2000); // Wait between links
     } catch (error) {
-      // טיפול בשגיאות
+      // Handle errors
       dailyStats.failed++;
-      log(`שגיאה בלינק ${i + 1}: ${error.message} 💥`);
+      log(`Error in link ${i + 1}: ${error.message} 💥`);
     }
     
-    // התראת התקדמות כל 3 לינקים
+    // Progress notification every 3 links
     if ((i + 1) % 3 === 0 && i < LINKS.length - 1) {
       showNotification(
-        '⏳ איסוף בתהליך...', 
-        `הושלמו ${i + 1}/${LINKS.length} לינקים (${dailyStats.successful} הצלחות)`, 
+        '⏳ Processing...', 
+        `Completed ${i + 1}/${LINKS.length} links (${dailyStats.successful} successes)`, 
         'basic'
       );
     }
@@ -303,7 +299,7 @@ async function processAllLinks() {
 }
 
 
-// פונקציה להמתנה לטעינת טאב
+// Function to wait for tab load
 function waitForTabLoad(tabId) {
   return new Promise((resolve) => {
     const checkStatus = () => {
@@ -325,27 +321,27 @@ function waitForTabLoad(tabId) {
   });
 }
 
-// פונקציה להמתנה
+// Function to wait
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// פונקציה שתרוץ בדף (content script)
+// Function to run on page (content script)
 function performPageActions() {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      console.log('מחפש כפתור כניסה');
+      console.log('Looking for sign-in button');
       
       const buttons = document.querySelectorAll('div.ci-button, button, [role="button"]');
       let targetButton = null;
       
-      // לוגיקה משופרת לזיהוי כפתורים
+      // Enhanced logic for button identification
       for (const button of buttons) {
         const text = button.textContent.trim().toLowerCase();
         if (
-          text.includes('כניסה') || 
+          text.includes('sign in') || 
           text.includes('enter') || 
-          text.includes('sign in') ||
+          text.includes('sign') ||
           button.getAttribute('data-spm')?.includes('sign')
         ) {
           targetButton = button;
@@ -354,19 +350,19 @@ function performPageActions() {
       }
       
       if (targetButton) {
-        console.log('נמצא כפתור, לוחץ עליו');
+        console.log('Button found, clicking on it');
         targetButton.click();
-        resolve(true); // החזרת הצלחה אמיתית
+        resolve(true); // Return actual success
       } else {
-        console.log('לא נמצא כפתור מתאים');
-        resolve(false); // החזרת כישלון
+        console.log('No matching button found');
+        resolve(false); // Return failure
       }
     }, 5000);
   });
 }
 
 
-// מאזין להודעות מה-popup - מורחב עם פונקציות חדשות
+// Listener for messages from popup - extended with new functions
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'getStatus') {
     sendResponse({
@@ -377,14 +373,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
   } else if (request.action === 'toggleLogging') {
     isLoggingEnabled = !isLoggingEnabled;
-    log(`לוג ${isLoggingEnabled ? 'הופעל' : 'כובה'}`);
+    log(`Logging ${isLoggingEnabled ? 'enabled' : 'disabled'}`);
     sendResponse({ isLoggingEnabled });
   } else if (request.action === 'testRun') {
     if (!currentProcessing) {
-      log('הפעלת בדיקה ידנית');
-      showNotification('🧪 בדיקה ידנית', 'מתחיל בדיקה ידנית של איסוף מטבעות...', 'basic');
+      log('Starting manual test');
+      showNotification('🧪 Manual test', 'Starting manual test of coin collection...', 'basic');
       
-      // איפוס סטטיסטיקות לבדיקה
+      // Reset statistics for test
       dailyStats = { successful: 0, failed: 0, total: LINKS.length, startTime: new Date() };
       
       loadLinksFromStorage().then(() => {
@@ -392,7 +388,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       });
       sendResponse({ success: true });
     } else {
-      sendResponse({ success: false, message: 'עיבוד כבר רץ' });
+      sendResponse({ success: false, message: 'Processing already running' });
     }
   } else if (request.action === 'getLogs') {
     chrome.storage.sync.get(['logs'], (result) => {
@@ -400,38 +396,38 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
     return true;
   } 
-  // פונקציות חדשות לניהול לינקים
+  // New functions for link management
   else if (request.action === 'getLinks') {
     sendResponse({ links: LINKS });
   } else if (request.action === 'addLink') {
     if (request.link && request.link.includes('aliexpress.com')) {
       LINKS.push(request.link);
       saveLinksToStorage(LINKS);
-      log(`נוסף לינק חדש: ${request.link.substring(0, 50)}...`);
-      showNotification('➕ לינק נוסף', 'לינק חדש נוסף בהצלחה לרשימה!', 'success');
+      log(`Added new link: ${request.link.substring(0, 50)}...`);
+      showNotification('➕ New link added', 'New link added successfully to the list!', 'success');
       sendResponse({ success: true });
     } else {
-      sendResponse({ success: false, message: 'לינק לא תקין' });
+      sendResponse({ success: false, message: 'Invalid link' });
     }
   } else if (request.action === 'deleteLink') {
     if (request.index >= 0 && request.index < LINKS.length) {
       const deletedLink = LINKS.splice(request.index, 1)[0];
       saveLinksToStorage(LINKS);
-      log(`נמחק לינק: ${deletedLink.substring(0, 50)}...`);
-      showNotification('🗑️ לינק נמחק', 'לינק הוסר בהצלחה מהרשימה!', 'basic');
+      log(`Deleted link: ${deletedLink.substring(0, 50)}...`);
+      showNotification('🗑️ Link deleted', 'Link removed successfully from the list!', 'basic');
       sendResponse({ success: true });
     } else {
-      sendResponse({ success: false, message: 'אינדקס לא תקין' });
+      sendResponse({ success: false, message: 'Invalid index' });
     }
   } else if (request.action === 'importLinks') {
     if (request.links && Array.isArray(request.links)) {
       LINKS = [...LINKS, ...request.links];
       saveLinksToStorage(LINKS);
-      log(`יובאו ${request.links.length} לינקים חדשים`);
-      showNotification('📥 לינקים יובאו', `${request.links.length} לינקים חדשים יובאו בהצלחה!`, 'success');
+      log(`Imported ${request.links.length} new links`);
+      showNotification('📥 New links imported', `${request.links.length} new links imported successfully!`, 'success');
       sendResponse({ success: true });
     } else {
-      sendResponse({ success: false, message: 'רשימת לינקים לא תקינה' });
+      sendResponse({ success: false, message: 'Invalid link list' });
     }
   } else if (request.action === 'getAnalytics') {
     const analyticsData = getAnalyticsData();
@@ -444,7 +440,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       lastRunDate: null
     };
     saveAnalyticsToStorage();
-    log('נתוני אנליטיקה אופסו');
+    log('Analytics data reset');
     sendResponse({ success: true });
   } else if (request.action === 'closeCurrentTab') {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {

@@ -351,7 +351,7 @@ function performPageActions() {
       if (targetButton) {
         console.log('Button found, clicking on it');
         targetButton.click();
-        resolve(true); // Return actual success
+        setTimeout(() => resolve(true), 2000)
       } else {
         console.log('No matching button found');
         resolve(false); // Return failure

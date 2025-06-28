@@ -13,7 +13,7 @@ const SHOPS = [
   "5a96e8a378fe418fbd20331ff74a1b97",
   "6446f9b385c249fb9baa289214f016e1",
   "6b0870a9d7a943b1b08a4b275905c8e3",
-  "e5ba5b7349344a0987687e67ca3e54fe"
+  "e5ba5b7349344a0987687e67ca3e54fe",
 ];
 
 let LINKS = SHOPS.map(id => `https://sale.aliexpress.com/__mobile/wTTBw4hZBz_m.htm?outBizId=${id}&identity=SHOP`);
@@ -281,8 +281,7 @@ async function processAllLinks() {
       await new Promise((resolve) => {
         chrome.tabs.remove(tab.id, () => resolve());
       });
-
-      await sleep(2000); // Wait between links
+      await sleep(1000); // Wait between links
     } catch (error) {
       // Handle errors
       dailyStats.failed++;
@@ -314,7 +313,7 @@ function waitForTabLoad(tabId) {
         if (tab.status === 'complete') {
           resolve();
         } else {
-          setTimeout(checkStatus, 500);
+          setTimeout(checkStatus, 100);
         }
       });
     };
@@ -339,11 +338,9 @@ function performPageActions() {
 
       // Enhanced logic for button identification
       for (const button of buttons) {
-        const text = button.textContent.trim().toLowerCase();
+        const text = button.textContent;
         if (
-          text.includes('sign in') ||
-          text.includes('enter') ||
-          text.includes('sign') ||
+          /כניסה|enter|sign[ -]in|check[ -]in/gi.test(text) ||
           button.getAttribute('data-spm')?.includes('sign')
         ) {
           targetButton = button;
@@ -359,7 +356,7 @@ function performPageActions() {
         console.log('No matching button found');
         resolve(false); // Return failure
       }
-    }, 5000);
+    }, 1000);
   });
 }
 

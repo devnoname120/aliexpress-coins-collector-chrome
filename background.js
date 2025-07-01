@@ -198,7 +198,8 @@ function getNext1030() {
 // Create daily alarm for 10:30
 chrome.runtime.onInstalled.addListener(async () => {
   log('Extension installed successfully');
-  showNotification('🎉 AliExpress Coins Collector', 'The extension was installed successfully! Coin collection will start tomorrow at 10:30', 'success');
+  // On install notification
+  // showNotification('🎉 AliExpress Coins Collector', 'The extension was installed successfully! Coin collection will start tomorrow at 10:30', 'success');
 
   // Load links from storage
   await loadLinksFromStorage();
@@ -222,7 +223,7 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     dailyStats = { successful: 0, failed: 0, total: LINKS.length, startTime: new Date() };
 
     // Start notification
-    showNotification('🚀 Starting coin collection', `Processing ${LINKS.length} links...`, 'basic');
+    // showNotification('🚀 Starting coin collection', `Processing ${LINKS.length} links...`, 'basic');
 
     try {
       await loadLinksFromStorage(); // Reload links
@@ -375,13 +376,13 @@ async function processAllLinks() {
     }
 
     // Progress notification every 3 links
-    if ((i + 1) % 3 === 0 && i < LINKS.length - 1) {
-      showNotification(
-        '⏳ Processing...',
-        `Completed ${i + 1}/${LINKS.length} links (${dailyStats.successful} successes)`,
-        'basic'
-      );
-    }
+    // if ((i + 1) % 3 === 0 && i < LINKS.length - 1) {
+    //   showNotification(
+    //     '⏳ Processing...',
+    //     `Completed ${i + 1}/${LINKS.length} links (${dailyStats.successful} successes)`,
+    //     'basic'
+    //   );
+    // }
   }
 }
 
@@ -461,7 +462,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   } else if (request.action === 'testRun') {
     if (!currentProcessing) {
       log('Starting manual test');
-      showNotification('🧪 Manual test', 'Starting manual test of coin collection...', 'basic');
+      // Manual test notification
+      // showNotification('🧪 Manual test', 'Starting manual test of coin collection...', 'basic');
 
       // Reset statistics for test
       dailyStats = { successful: 0, failed: 0, total: LINKS.length, startTime: new Date() };
@@ -487,7 +489,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       LINKS.push(request.link);
       saveLinksToStorage(LINKS);
       log(`Added new link: ${request.link.substring(0, 50)}...`);
-      showNotification('➕ New link added', 'New link added successfully to the list!', 'success');
+      // showNotification('➕ New link added', 'New link added successfully to the list!', 'success');
       sendResponse({ success: true });
     } else {
       sendResponse({ success: false, message: 'Invalid link' });
@@ -497,7 +499,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       const deletedLink = LINKS.splice(request.index, 1)[0];
       saveLinksToStorage(LINKS);
       log(`Deleted link: ${deletedLink.substring(0, 50)}...`);
-      showNotification('🗑️ Link deleted', 'Link removed successfully from the list!', 'basic');
+      // showNotification('🗑️ Link deleted', 'Link removed successfully from the list!', 'basic');
       sendResponse({ success: true });
     } else {
       sendResponse({ success: false, message: 'Invalid index' });
@@ -507,7 +509,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       LINKS = [...LINKS, ...request.links];
       saveLinksToStorage(LINKS);
       log(`Imported ${request.links.length} new links`);
-      showNotification('📥 New links imported', `${request.links.length} new links imported successfully!`, 'success');
+      // showNotification('📥 New links imported', `${request.links.length} new links imported successfully!`, 'success');
       sendResponse({ success: true });
     } else {
       sendResponse({ success: false, message: 'Invalid link list' });

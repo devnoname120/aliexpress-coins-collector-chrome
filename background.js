@@ -39,6 +39,11 @@ let analytics = {
   lastRunDate: null
 };
 
+// Constants for mobile coin collection
+const MOBILE_COIN_URL = 'https://m.aliexpress.com/p/coin-index/index.html?_immersiveMode=true&from=widget&aewidget_status=signed&bizId=coins&widgetId=widget_coin_2x2_normal&user_growth_scene=widget&aewidget_biz_version=1&aewidget_widgetId=widget_coin_2x2_normal&aewidget_bizId=coins&aewidget_login=true&aewidget_deviceLevel=1&fromApp=true';
+const MOBILE_USER_AGENT = 'AliApp(AE/8.131.2)';
+const RULE_ID = 1;
+
 // Function to load analytics from storage
 async function loadAnalyticsFromStorage() {
   return new Promise((resolve) => {
@@ -246,7 +251,81 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
   }
 });
 
+// Function to collect mobile coins
+async function collectMobileCoins() {
+  try {
+    // 1. Set up the user agent rule
+    await chrome.declarativeNetRequest.updateDynamicRules({
+      removeRuleIds: [RULE_ID],
+      addRules: [{
+        id: RULE_ID,
+        priority: 1,
+        action: {
+          type: 'modifyHeaders',
+          requestHeaders: [{
+            header: 'User-Agent',
+            operation: 'set',
+            value: MOBILE_USER_AGENT
+          }]
+        },
+        condition: {
+          urlFilter: '|https://m.aliexpress.com/*',
+          resourceTypes: ['main_frame', 'xmlhttprequest']
+        }
+      }]
+    });
+
+    // 2. Open the mobile coins page
+    const { id: tabId } = await chrome.tabs.create({ url: MOBILE_COIN_URL });
+
+    // await sleep(1000);
+
+    // 3. Wait for page load and click the sign button
+        await sleep(3000);
+
+        // Wait a bit for the page to fully initialize
+        setTimeout(async () => {
+          try {
+            await chrome.scripting.executeScript({
+              target: { tabId },
+              func: () => {
+                const signButton = document.querySelector('#signButton');
+                if (signButton) {
+                  signButton.click();
+                  return true;
+                }
+                return false;
+              }
+            });
+          } catch (error) {
+            log(`Error clicking mobile sign button: ${error.message}`);
+          }
+        }, 3000);
+
+
+    await sleep(5000);
+
+    // chrome.tabs.onUpdated.addListener(listener);
+    // 4. Clean up when the tab is closed
+    const closeHandler = async closedTabId => {
+      if (closedTabId === tabId) {
+        await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds: [RULE_ID] });
+        chrome.tabs.onRemoved.removeListener(closeHandler);
+      }
+    };
+    chrome.tabs.onRemoved.addListener(closeHandler);
+
+  } catch (error) {
+    log(`Error in mobile coin collection: ${error.message}`);
+  }
+}
+
+// Add mobile coin collection to the daily processing
 async function processAllLinks() {
+  // First collect mobile coins
+  await collectMobileCoins();
+  
+  // Then process regular links
   for (let i = 0; i < LINKS.length; i++) {
     const link = LINKS[i];
     log(`Opening link ${i + 1}/${LINKS.length}: ${link.substring(0, 50)}...`);
@@ -305,7 +384,6 @@ async function processAllLinks() {
     }
   }
 }
-
 
 // Function to wait for tab load
 function waitForTabLoad(tabId) {
@@ -366,7 +444,6 @@ function performPageActions() {
     }, 1000);
   });
 }
-
 
 // Listener for messages from popup - extended with new functions
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

@@ -14,10 +14,13 @@
     "alarms",
     "storage",
     "scripting",
-    "notifications"
+    "notifications",
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess"
   ],
   "host_permissions": [
-    "https://sale.aliexpress.com/*"
+    "https://sale.aliexpress.com/*",
+    "https://m.aliexpress.com/*"
   ],
   "background": {
     "service_worker": "background.js"

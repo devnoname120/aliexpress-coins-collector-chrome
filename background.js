@@ -21,6 +21,15 @@ const SHOPS = [
   "abb7e1dcd089459c9c34116414ed7b68",
   "dacc7e77b34f4360ad2b3f93b03141bc",
   "e5ba5b7349344a0987687e67ca3e54fe",
+  "SHOP%7CSHOP_HOME%7C666371%7C26385",
+  "ee5797613d7c49fb8c4fec31afe22e24",
+  "8e051e8200cd48de825e99f834683690",
+  "SHOP%7CSHOP_HOME%7C542788%7C23578",
+  "af3a60f9515841e4b7d9aa4a1d3acf1d",
+  "521ca4de04bd478b81d990e21ec1a45d",
+  "ee5797613d7c49fb8c4fec31afe22e24",
+  "0c1845bb724a42778effef86f6ca0b5e",
+  "SHOP%7CSHOP_HOME%7C666371%7C26385",
 ];
 
 let LINKS = SHOPS.map(id => `https://sale.aliexpress.com/__mobile/wTTBw4hZBz_m.htm?outBizId=${id}&identity=SHOP`);
@@ -325,7 +334,7 @@ async function collectMobileCoins() {
 async function processAllLinks() {
   // First collect mobile coins
   await collectMobileCoins();
-  
+
   // Then process regular links
   for (let i = 0; i < LINKS.length; i++) {
     const link = LINKS[i];

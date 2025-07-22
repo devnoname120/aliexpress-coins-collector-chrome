@@ -12,6 +12,9 @@
       --button-primary: #4CAF50;
       --button-secondary: #2196F3;
       --border-color: #ddd;
+      --shadow-3d: 0 4px 24px 0 rgba(60,60,60,0.12), 0 1.5px 4px 0 rgba(0,0,0,0.10);
+      --shadow-3d-hover: 0 8px 32px 0 rgba(60,60,60,0.18), 0 3px 8px 0 rgba(0,0,0,0.15);
+      --card-tilt: perspective(600px);
     }
 
     [data-theme="dark"] {
@@ -31,6 +34,11 @@
       color: var(--text-primary);
       margin: 0;
       transition: all 0.3s ease;
+      animation: popup-fade-in 0.7s cubic-bezier(.4,2,.6,1) 1;
+    }
+    @keyframes popup-fade-in {
+      from { opacity: 0; transform: translateY(30px) scale(0.98); }
+      to { opacity: 1; transform: none; }
     }
     
     .header {
@@ -63,6 +71,15 @@
       margin-bottom: 15px;
       font-size: 13px;
       border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-3d);
+      transition: box-shadow 0.3s cubic-bezier(.4,2,.6,1), transform 0.3s cubic-bezier(.4,2,.6,1);
+    }
+    .status-card:hover {
+      box-shadow: var(--shadow-3d-hover);
+      z-index: 2;
+    }
+    .status-card, .stat-mini, .expandable {
+      will-change: transform;
     }
 
     .stats-mini {
@@ -79,6 +96,12 @@
       text-align: center;
       font-size: 12px;
       border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-3d);
+      transition: box-shadow 0.3s cubic-bezier(.4,2,.6,1), transform 0.3s cubic-bezier(.4,2,.6,1);
+    }
+    .stat-mini:hover {
+      box-shadow: var(--shadow-3d-hover);
+      z-index: 2;
     }
 
     .stat-number {
@@ -98,11 +121,18 @@
       width: 100%;
       font-size: 13px;
       transition: all 0.2s ease;
+      box-shadow: var(--shadow-3d);
+      transition: box-shadow 0.3s cubic-bezier(.4,2,.6,1), transform 0.3s cubic-bezier(.4,2,.6,1);
     }
-    
     .button:hover {
       opacity: 0.9;
       transform: translateY(-1px);
+      box-shadow: var(--shadow-3d-hover);
+      z-index: 2;
+    }
+    .button:active {
+      transform: scale(0.97) translateY(1px) rotateX(4deg);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.10);
     }
     
     .button:disabled {
@@ -113,6 +143,7 @@
     
     .button.secondary {
       background: var(--button-secondary);
+      background: linear-gradient(135deg, var(--button-secondary) 80%, #b3e0ff 100%);
     }
 
     .button.small {
@@ -122,6 +153,7 @@
 
     .button.danger {
       background: #f44336;
+      background: linear-gradient(135deg, #f44336 80%, #ffb3b3 100%);
     }
 
     /* סגירת חלונות מתקפלים */
@@ -133,6 +165,7 @@
       margin-top: 10px;
       display: none;
       border: 1px solid var(--border-color);
+      animation: section-slide-in 0.5s cubic-bezier(.4,2,.6,1);
     }
 
     .expandable.show {
@@ -184,6 +217,7 @@
       border-radius: 8px;
       overflow: hidden;
       margin: 8px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
     }
 
     .progress-fill {
@@ -197,6 +231,11 @@
       color: white;
       font-size: 10px;
       font-weight: bold;
+      animation: progress-fill-anim 1s cubic-bezier(.4,2,.6,1);
+    }
+    @keyframes progress-fill-anim {
+      from { width: 0; }
+      to { width: var(--progress-width, 100%); }
     }
 
     .log-entry {
@@ -222,6 +261,15 @@
     input[type="text"]:focus {
       outline: none;
       border-color: var(--button-primary);
+    }
+    /* 3D tilt effect */
+    .tilt-3d {
+      transform-style: preserve-3d;
+      transition: transform 0.3s cubic-bezier(.4,2,.6,1), box-shadow 0.3s cubic-bezier(.4,2,.6,1);
+      will-change: transform;
+    }
+    .tilt-3d.tilted {
+      box-shadow: var(--shadow-3d-hover);
     }
   </style>
 </head>
@@ -327,5 +375,33 @@
   </div>
   
   <script src="popup.js"></script>
+  <script>
+    // 3D tilt effect for main cards/buttons
+    function add3DTilt(selector) {
+      document.querySelectorAll(selector).forEach(el => {
+        el.classList.add('tilt-3d');
+        el.addEventListener('mousemove', e => {
+          const rect = el.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          const rotateX = ((y - centerY) / centerY) * 8;
+          const rotateY = ((x - centerX) / centerX) * -8;
+          el.style.transform = `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+          el.classList.add('tilted');
+        });
+        el.addEventListener('mouseleave', () => {
+          el.style.transform = '';
+          el.classList.remove('tilted');
+        });
+      });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      add3DTilt('.status-card');
+      add3DTilt('.stat-mini');
+      add3DTilt('.button');
+    });
+  </script>
 </body>
 </html>

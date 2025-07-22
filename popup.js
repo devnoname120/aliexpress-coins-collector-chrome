@@ -95,7 +95,6 @@ document.addEventListener('DOMContentLoaded', function() {
       if (response && response.analytics) {
         const analytics = response.analytics;
         const today = analytics.today || { successful: 0, total: 0 };
-        
         document.getElementById('todaySuccess').textContent = today.successful;
         document.getElementById('totalCoins').textContent = analytics.total?.coins || 0;
         document.getElementById('streak').textContent = analytics.total?.streak || 0;
@@ -103,9 +102,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const weeklyAvg = analytics.weekly?.length > 0 ? 
           Math.round(analytics.weekly.reduce((sum, day) => sum + (day.successRate || 0), 0) / analytics.weekly.length) : 0;
         document.getElementById('weeklyAverage').textContent = weeklyAvg + '%';
-        
         const successRate = today.total > 0 ? Math.round((today.successful / today.total) * 100) : 0;
-        document.getElementById('successProgress').style.width = successRate + '%';
+        const progressFill = document.getElementById('successProgress');
+        progressFill.style.setProperty('--progress-width', successRate + '%');
+        progressFill.style.width = successRate + '%';
         document.getElementById('successPercentage').textContent = successRate + '%';
       }
     });
